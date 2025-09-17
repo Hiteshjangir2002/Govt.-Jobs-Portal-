@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Job Portal</title>
+    <style>
+        :root {
+            --primary-bg: #0a0a12;
+            --secondary-bg: rgba(19, 20, 38, 0.8);
+            --accent-blue: #00a2ff;
+            --accent-purple: #a239ea;
+            --accent-pink: #ff2a6d;
+            --text-light: #ffffff;
+            --text-muted: #8b8b9a;
+            --card-bg: rgba(30, 31, 51, 0.7);
+            --card-border: rgba(92, 97, 168, 0.3);
+            --glow-blue: 0 0 10px rgba(0, 162, 255, 0.7);
+            --glow-purple: 0 0 10px rgba(162, 57, 234, 0.7);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--primary-bg);
+            color: var(--text-light);
+            min-height: 100vh;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(162, 57, 234, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 90% 70%, rgba(0, 162, 255, 0.1) 0%, transparent 20%);
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .glass-panel {
+            background: var(--secondary-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            border: 1px solid var(--card-border);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        h1, h2, h3 {
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 16px;
+            font-weight: 700;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .btn {
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
+            color: var(--text-light);
+            border: none;
+            border-radius: 8px;
+            padding: 12px 24px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: var(--glow-blue);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--glow-purple);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid var(--accent-purple);
+            color: var(--accent-purple);
+            box-shadow: none;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(162, 57, 234, 0.1);
+            box-shadow: var(--glow-purple);
+        }
+
+        .btn-danger {
+            background: transparent;
+            border: 1px solid var(--accent-pink);
+            color: var(--accent-pink);
+            box-shadow: none;
+        }
+
+        .btn-danger:hover {
+            background: rgba(255, 42, 109, 0.1);
+            box-shadow: 0 0 10px rgba(255, 42, 109, 0.7);
+        }
+
+        form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-muted);
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 8px;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            color: var(--text-light);
+            transition: all 0.3s ease;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+            box-shadow: var(--glow-blue);
+        }
+
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
+        .login-container {
+            max-width: 400px;
+            margin: 100px auto;
+            padding: 32px;
+        }
+
+        .dashboard-section {
+            margin-bottom: 32px;
+        }
+
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid var(--card-border);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .stat-label {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .jobs-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 16px;
+        }
+
+        .job-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 16px;
+            border: 1px solid var(--card-border);
+            transition: all 0.3s ease;
+        }
+
+        .job-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--glow-blue);
+        }
+
+        .job-title {
+            font-size: 1.2rem;
+            margin-bottom: 8px;
+        }
+
+        .job-category {
+            color: var(--accent-blue);
+            font-size: 0.9rem;
+            margin-bottom: 12px;
+        }
+
+        .job-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 16px;
+        }
+
+        .alert {
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+        }
+
+        .alert-success {
+            background: rgba(0, 255, 136, 0.1);
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            color: #00ff88;
+        }
+
+        .alert-error {
+            background: rgba(255, 42, 109, 0.1);
+            border: 1px solid rgba(255, 42, 109, 0.3);
+            color: var(--accent-pink);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            form {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-container {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .jobs-list {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Firebase Initialization -->
+        <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
+        <script>
+            // Firebase configuration 
+            const firebaseConfig = {
+  apiKey: "AIzaSyAevDOccrdl6NFcDedUBV1tz1iTtAeAxmE",
+  authDomain: "govt-jobs-portal-7da5c.firebaseapp.com",
+  databaseURL: "https://govt-jobs-portal-7da5c-default-rtdb.firebaseio.com",
+  projectId: "govt-jobs-portal-7da5c",
+  storageBucket: "govt-jobs-portal-7da5c.firebasestorage.app",
+  messagingSenderId: "789430780688",
+  appId: "1:789430780688:web:b5d3b2490085359d265b95"
+};
+            
+            // Initialize Firebase
+            firebase.initializeApp(firebaseConfig);
+            const auth = firebase.auth();
+            const database = firebase.database();
+        </script>
+
+        <!-- Login Section -->
+        <div id="loginSection" class="glass-panel login-container">
+            <h1>Admin Login</h1>
+            <div id="loginMessage"></div>
+            <form id="loginForm">
+                <div class="form-group full-width">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" required>
+                </div>
+                <div class="form-group full-width">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" required>
+                </div>
+                <button type="submit" class="btn full-width">Login</button>
+            </form>
+        </div>
+
+        <!-- Admin Dashboard (Initially Hidden) -->
+        <div id="adminDashboard" class="hidden">
+            <h1>Job Portal Admin Dashboard</h1>
+            
+            <!-- Stats Overview -->
+            <div class="glass-panel">
+                <h2>Overview</h2>
+                <div class="stats-container">
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalJobs">0</div>
+                        <div class="stat-label">Total Jobs</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="publishedJobs">0</div>
+                        <div class="stat-label">Published Jobs</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="draftJobs">0</div>
+                        <div class="stat-label">Draft Jobs</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalCategories">0</div>
+                        <div class="stat-label">Categories</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Category Management -->
+            <div class="glass-panel dashboard-section">
+                <h2>Manage Categories</h2>
+                <div id="categoryMessage"></div>
+                <form id="categoryForm">
+                    <div class="form-group">
+                        <label for="categoryName">Category Name</label>
+                        <input type="text" id="categoryName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="categoryImage">Image URL</label>
+                        <input type="url" id="categoryImage" required>
+                    </div>
+                    <button type="submit" class="btn">Add Category</button>
+                </form>
+                
+                <h3 style="margin-top: 32px;">Existing Categories</h3>
+                <div id="categoriesList" class="jobs-list"></div>
+            </div>
+
+            <!-- Job Management -->
+            <div class="glass-panel dashboard-section">
+                <h2>Post New Job</h2>
+                <div id="jobMessage"></div>
+                <form id="jobForm">
+                    <div class="form-group">
+                        <label for="jobTitle">Job Title</label>
+                        <input type="text" id="jobTitle" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="jobImage">Image URL</label>
+                        <input type="url" id="jobImage" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="jobCategory">Category</label>
+                        <select id="jobCategory" required></select>
+                    </div>
+                    <div class="form-group full-width">
+                        <label for="jobDescription">Description</label>
+                        <textarea id="jobDescription" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="jobLink">Apply Link</label>
+                        <input type="url" id="jobLink" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="jobStatus">Status</label>
+                        <select id="jobStatus">
+                            <option value="published">Publish</option>
+                            <option value="draft">Save as Draft</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn">Save Job</button>
+                </form>
+            </div>
+
+            <!-- Job List -->
+            <div class="glass-panel dashboard-section">
+                <h2>Manage Jobs</h2>
+                <div class="form-group">
+                    <input type="text" id="jobSearch" placeholder="Search jobs...">
+                </div>
+                <div id="jobsList" class="jobs-list"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const loginSection = document.getElementById('loginSection');
+        const adminDashboard = document.getElementById('adminDashboard');
+        const loginForm = document.getElementById('loginForm');
+        const loginMessage = document.getElementById('loginMessage');
+        const categoryForm = document.getElementById('categoryForm');
+        const categoryMessage = document.getElementById('categoryMessage');
+        const jobForm = document.getElementById('jobForm');
+        const jobMessage = document.getElementById('jobMessage');
+        const jobCategory = document.getElementById('jobCategory');
+        const categoriesList = document.getElementById('categoriesList');
+        const jobsList = document.getElementById('jobsList');
+        const jobSearch = document.getElementById('jobSearch');
+        const totalJobs = document.getElementById('totalJobs');
+        const publishedJobs = document.getElementById('publishedJobs');
+        const draftJobs = document.getElementById('draftJobs');
+        const totalCategories = document.getElementById('totalCategories');
+
+        // Check auth state
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                // User is signed in
+                loginSection.classList.add('hidden');
+                adminDashboard.classList.remove('hidden');
+                loadCategories();
+                loadJobs();
+                updateStats();
+            } else {
+                // User is signed out
+                loginSection.classList.remove('hidden');
+                adminDashboard.classList.add('hidden');
+            }
+        });
+
+        // Login form submission
+        loginForm.addEventListener('submit', e => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            auth.signInWithEmailAndPassword(email, password)
+                .then(() => {
+                    loginMessage.innerHTML = '<div class="alert alert-success">Login successful!</div>';
+                })
+                .catch(error => {
+                    loginMessage.innerHTML = `<div class="alert alert-error">${error.message}</div>`;
+                });
+        });
+
+        // Category form submission
+        categoryForm.addEventListener('submit', e => {
+            e.preventDefault();
+            const name = document.getElementById('categoryName').value;
+            const image = document.getElementById('categoryImage').value;
+            
+            const newCategoryKey = database.ref().child('categories').push().key;
+            const updates = {};
+            updates[`/categories/${newCategoryKey}`] = { name, image };
+            
+            database.ref().update(updates)
+                .then(() => {
+                    categoryMessage.innerHTML = '<div class="alert alert-success">Category added successfully!</div>';
+                    categoryForm.reset();
+                    loadCategories();
+                    updateStats();
+                })
+                .catch(error => {
+                    categoryMessage.innerHTML = `<div class="alert alert-error">${error.message}</div>`;
+                });
+        });
+
+        // Job form submission
+        jobForm.addEventListener('submit', e => {
+            e.preventDefault();
+            const title = document.getElementById('jobTitle').value;
+            const image = document.getElementById('jobImage').value;
+            const category = document.getElementById('jobCategory').value;
+            const description = document.getElementById('jobDescription').value;
+            const link = document.getElementById('jobLink').value;
+            const status = document.getElementById('jobStatus').value;
+            
+            const newJobKey = database.ref().child('jobs').push().key;
+            const jobData = {
+                title,
+                image,
+                category,
+                description,
+                link,
+                status,
+                createdAt: Date.now()
+            };
+            
+            const updates = {};
+            updates[`/jobs/${category}/${newJobKey}`] = jobData;
+            
+            database.ref().update(updates)
+                .then(() => {
+                    jobMessage.innerHTML = '<div class="alert alert-success">Job saved successfully!</div>';
+                    jobForm.reset();
+                    loadJobs();
+                    updateStats();
+                })
+                .catch(error => {
+                    jobMessage.innerHTML = `<div class="alert alert-error">${error.message}</div>`;
+                });
+        });
+
+        // Load categories for dropdown and list
+        function loadCategories() {
+            database.ref('categories').on('value', snapshot => {
+                // Clear previous options
+                jobCategory.innerHTML = '';
+                categoriesList.innerHTML = '';
+                
+                if (!snapshot.exists()) {
+                    jobCategory.innerHTML = '<option value="">No categories available</option>';
+                    categoriesList.innerHTML = '<p>No categories found</p>';
+                    return;
+                }
+                
+                // Add categories to dropdown
+                snapshot.forEach(category => {
+                    const option = document.createElement('option');
+                    option.value = category.key;
+                    option.textContent = category.val().name;
+                    jobCategory.appendChild(option);
+                });
+                
+                // Display categories list
+                snapshot.forEach(category => {
+                    const div = document.createElement('div');
+                    div.className = 'job-card';
+                    div.innerHTML = `
+                        <h3 class="job-title">${category.val().name}</h3>
+                        <div class="job-actions">
+                            <button class="btn btn-danger" onclick="deleteCategory('${category.key}')">Delete</button>
+                        </div>
+                    `;
+                    categoriesList.appendChild(div);
+                });
+            });
+        }
+
+        // Load jobs with search functionality
+        function loadJobs() {
+            database.ref('jobs').on('value', snapshot => {
+                jobsList.innerHTML = '';
+                
+                if (!snapshot.exists()) {
+                    jobsList.innerHTML = '<p class="full-width">No jobs found</p>';
+                    return;
+                }
+                
+                let allJobs = [];
+                snapshot.forEach(category => {
+                    category.forEach(job => {
+                        allJobs.push({
+                            id: job.key,
+                            categoryId: category.key,
+                            ...job.val()
+                        });
+                    });
+                });
+                
+                // Filter jobs based on search input
+                const searchTerm = jobSearch.value.toLowerCase();
+                const filteredJobs = searchTerm ? 
+                    allJobs.filter(job => 
+                        job.title.toLowerCase().includes(searchTerm) || 
+                        job.description.toLowerCase().includes(searchTerm)
+                    ) : allJobs;
+                
+                // Display jobs
+                filteredJobs.forEach(job => {
+                    const div = document.createElement('div');
+                    div.className = 'job-card';
+                    div.innerHTML = `
+                        <h3 class="job-title">${job.title}</h3>
+                        <p class="job-category">Category: ${job.categoryId}</p>
+                        <p>Status: ${job.status}</p>
+                        <div class="job-actions">
+                            <button class="btn" onclick="editJob('${job.categoryId}', '${job.id}')">Edit</button>
+                            <button class="btn btn-danger" onclick="deleteJob('${job.categoryId}', '${job.id}')">Delete</button>
+                        </div>
+                    `;
+                    jobsList.appendChild(div);
+                });
+            });
+        }
+
+        // Update statistics
+        function updateStats() {
+            database.ref('jobs').once('value', snapshot => {
+                let total = 0;
+                let published = 0;
+                let drafts = 0;
+                
+                if (snapshot.exists()) {
+                    snapshot.forEach(category => {
+                        category.forEach(job => {
+                            total++;
+                            if (job.val().status === 'published') published++;
+                            if (job.val().status === 'draft') drafts++;
+                        });
+                    });
+                }
+                
+                totalJobs.textContent = total;
+                publishedJobs.textContent = published;
+                draftJobs.textContent = drafts;
+            });
+            
+            database.ref('categories').once('value', snapshot => {
+                totalCategories.textContent = snapshot.exists() ? snapshot.numChildren() : 0;
+            });
+        }
+
+        // Delete category
+        function deleteCategory(categoryId) {
+            if (confirm('Are you sure you want to delete this category?')) {
+                database.ref(`categories/${categoryId}`).remove()
+                    .then(() => {
+                        categoryMessage.innerHTML = '<div class="alert alert-success">Category deleted successfully!</div>';
+                        loadCategories();
+                        updateStats();
+                    })
+                    .catch(error => {
+                        categoryMessage.innerHTML = `<div class="alert alert-error">${error.message}</div>`;
+                    });
+            }
+        }
+
+        // Delete job
+        function deleteJob(categoryId, jobId) {
+            if (confirm('Are you sure you want to delete this job?')) {
+                database.ref(`jobs/${categoryId}/${jobId}`).remove()
+                    .then(() => {
+                        jobMessage.innerHTML = '<div class="alert alert-success">Job deleted successfully!</div>';
+                        loadJobs();
+                        updateStats();
+                    })
+                    .catch(error => {
+                        jobMessage.innerHTML = `<div class="alert alert-error">${error.message}</div>`;
+                    });
+            }
+        }
+
+        // Edit job (placeholder for future implementation)
+        function editJob(categoryId, jobId) {
+            alert(`Edit functionality would open a form to edit job: ${jobId} in category: ${categoryId}`);
+        }
+
+        // Search functionality
+        jobSearch.addEventListener('input', loadJobs);
+    </script>
+</body>
+</html>
